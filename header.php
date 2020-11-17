@@ -54,6 +54,11 @@ if (empty($_SESSION['email'])) {
     <link href="assets/css/toastr.min.css" rel="stylesheet">
     <script src="assets/js/toastr.min.js"></script>
 
+    <!-- Autocomplete -->
+    <link href="assets/css/easy-autocomplete.min.css" rel="stylesheet">
+    <link href="assets/css/easy-autocomplete.themes.min.css" rel="stylesheet">
+    <script src="assets/js/jquery.easy-autocomplete.min.js"></script>
+
     <style>
     div.dataTables_wrapper div.dataTables_length select {
         background-color: #FFFFFF;

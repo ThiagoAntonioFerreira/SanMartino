@@ -1,5 +1,28 @@
 <?php include("header.php"); ?>
 
+<?php 
+
+if (isset($_GET["excluir"])) {
+    include 'banco.php';
+    $id = $_GET["excluir"];
+    $pdo = Banco::conectar();
+    $sql = "delete from valores_orcamento where id_orcamento=?";
+    $q = $pdo->prepare($sql);
+    $q->execute(array(
+        $id
+    ));
+    
+    $sql = "delete from orcamentos where id=?";
+    $q = $pdo->prepare($sql);
+    $q->execute(array(
+        $id
+    ));
+    
+    Banco::desconectar();
+    exit;
+}
+?>
+
 <div class="content">
     <div class="row">
         <div class="col-md-12">
@@ -28,44 +51,23 @@
                                 <?php
                                 include 'banco.php';
                                 $pdo = Banco::conectar();
-                                $sql = 'select id, id_cliente, data, id_servico, id_mercadoria from orcamentos ORDER BY data desc';
+                                $sql = 'select o.id, o.id_cliente, o.data, o.id_servico, o.id_mercadoria, m.mercadoria, s.servico, c.nome
+                                        from orcamentos o left join mercadorias m on (o.id_mercadoria = m.id)
+                                        left join servicos s on (o.id_servico = s.id)
+                                        inner join clientes c on (o.id_cliente = c.id)
+                                        ORDER BY id desc';
 
                                 foreach ($pdo->query($sql) as $row) {
-                                    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                                    $sql = "SELECT * FROM clientes where id = ?";
-                                    $q = $pdo->prepare($sql);
-                                    $id = $row['id_cliente'];
-                                    $q->execute(array(
-                                        $id
-                                    ));
-                                    $cliente = $q->fetch(PDO::FETCH_ASSOC);
-
-                                    $sql = "SELECT * FROM servicos where id = ?";
-                                    $q = $pdo->prepare($sql);
-                                    $id = $row['id_servico'];
-                                    $q->execute(array(
-                                        $id
-                                    ));
-                                    $servico = $q->fetch(PDO::FETCH_ASSOC);
-
-                                    $sql = "SELECT * FROM mercadorias where id = ?";
-                                    $q = $pdo->prepare($sql);
-                                    $id = $row['id_mercadoria'];
-                                    $q->execute(array(
-                                        $id
-                                    ));
-                                    $mercadoria = $q->fetch(PDO::FETCH_ASSOC);
-
                                     echo '<tr>';
-                                    echo '<td>' . $row['id'] . '</td>';
-                                    echo '<td>' . $row['data'] . '</td>';
-                                    echo '<td>' . $cliente['nome'] . '</td>';
-                                    echo '<td>' . $servico['servico'] . '</td>';
-                                    echo '<td>' . $mercadoria['mercadoria'] . '</td>';
+                                    echo '<td>'.$row['id'].'</td>';
+                                    echo '<td>'.date('d/m/Y', strtotime($row['data'])).'</td>';
+                                    echo '<td>'.$row['nome'].'</td>';
+                                    echo '<td>'.$row['servico'].'</td>';
+                                    echo '<td>'.$row['mercadoria'].'</td>';
                                     echo '<td>
 										<input type="hidden" value="' . $row['id'] . '" id="hfId" />
 										<a href="orcamento.php?id=' . $row['id'] . '" class="btn btn-primary"><i class="fa fa-edit"></i></a>
-										<a href="#" class="btn btn-danger"><i class="fa fa-trash"></i></a></td>';
+										<a href="#" class="btn btn-danger btn-excluir"><i class="fa fa-trash"></i></a></td>';
                                     echo '</tr>';
                                 }
                                 ?>
@@ -89,11 +91,10 @@ $(document).ready(function() {
             var id = link.siblings('#hfId').val();
 
             $.ajax({
-                url: 'consultatarefa.php?excluir=' + id,
+                url: 'orcamentos.php?excluir=' + id,
                 type: 'DELETE',
                 success: function(result) {
-                    var button = event.data.originalObject;
-                    button.closest('tr').remove();
+                	window.location.href = "orcamentos.php";
                 }
             });
         }

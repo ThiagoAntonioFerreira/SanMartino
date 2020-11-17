@@ -79,7 +79,7 @@ if (empty($_POST)) {
                                 <input type="hidden" name="sent" value="true"> <input type="hidden" name="id"
                                     value="<?php if (isset($_GET["id"])) echo $_GET["id"] ?>">
                                 <button type="submit" class="btn btn-primary btn-round">Salvar</button>
-                                <a href="seguro_mercadoria.php" class="btn btn-danger btn-round">Cancelar</a>
+                                <a href="seguro-mercadoria-list.php" class="btn btn-danger btn-round">Cancelar</a>
                             </div>
                         </div>
                     </form>

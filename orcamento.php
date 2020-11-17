@@ -1,3 +1,19 @@
+<style>
+.select2-container{
+ width: 100%!important;
+ }
+ .select2-search--dropdown .select2-search__field {
+ width: 98%;
+ }
+.select2-container--default .select2-selection--single{
+    padding:6px;
+    height: 37px;
+    font-size: 1.2em;  
+    position: relative;
+}
+    
+  </style>
+  
 <?php
 var_dump($_POST);
 include 'banco.php';
@@ -12,7 +28,7 @@ $sqlmescolta = 'SELECT id, escolta FROM escolta ORDER BY escolta';
 $sqltipoveiculo = 'SELECT id, tipo_veiculo FROM tipo_veiculos ORDER BY tipo_veiculo';
 
 $id = "";
-if (!empty($_GET['id'])) {
+if (! empty($_GET['id'])) {
     $id = $_GET['id'];
 }
 
@@ -36,7 +52,6 @@ if (empty($_POST)) {
             $id_orcamento
         ));
         $valores_orcamento = $q->fetch(PDO::FETCH_ASSOC);
-
 
         Banco::desconectar();
     }
@@ -78,7 +93,7 @@ if (empty($_POST)) {
 
         $id = $pdo->lastInsertId();
 
-        for ($i = 0; $i < count($_POST['origem']); $i++) {
+        for ($i = 0; $i < count($_POST['origem']); $i ++) {
             $sql = "INSERT INTO valores_orcamento (id_orcamento, origem, destino, tipo_veiculo, frete_peso, gris, adv, pedagio, icms) VALUES (?,?,?,?,?,?,?,?,?)";
             $q = $pdo->prepare($sql);
             $q->execute(array(
@@ -120,21 +135,22 @@ if (empty($_POST)) {
 ?>
 <?php include("header.php"); ?>
 <div class="content">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card card-user">
-                <div class="card-header">
-                    <h5 class="card-title">Clientes</h5>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Cliente </label> <input required type="hidden" name="id"
-                                        value="<?php echo !empty($id) ? $id : ''; ?>"> <select class="form-control"
-                                        id="cliente" name="id_cliente">
-                                        <option value="0">Selecione o Cliente</option>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card card-user">
+				<div class="card-header">
+					<h5 class="card-title">Clientes</h5>
+				</div>
+				<div class="card-body">
+					<form method="post">
+						<div class="row">
+							<div class="col-md-9">
+								<div class="form-group">
+									<label>Cliente </label> <input required type="hidden" name="id"
+										value="<?php echo !empty($id) ? $id : ''; ?>"> <select
+										class="form-control" required="required" id="cliente"
+										name="id_cliente">
+										<option value="0">Selecione o Cliente</option>
                                         <?php
                                         foreach ($pdo->query($sqlcliente) as $row) {
                                             if ($row['id'] == $data['id_cliente']) {
@@ -147,28 +163,28 @@ if (empty($_POST)) {
                                         }
                                         ?>
                                     </select>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>Data:</label> <input class="form-control" type="text" name="data" id="data"
-                                        value="<?php if ($id != "") {
-                                                                                                                                    echo $data['data'];
-                                                                                                                                } else {
-                                                                                                                                    echo "";
-                                                                                                                                } ?>">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Mercadoria </label> <select class="form-control" id="mercadoria"
-                                        name="id_mercadoria">
-                                        <option value="0">Selecione a Mercadoria</option>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label>Data:</label> <input class="form-control" type="text" disabled="disabled"
+										name="data" id="data"
+										value="<?php if ($id != "") {
+                                        echo $data['data'];
+                                    } else {
+                                        echo date('d/m/Y');
+                                    }
+                                    ?>">
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Mercadoria </label> <select class="form-control"
+										id="mercadoria" name="id_mercadoria">
+										<option value="0">Selecione a Mercadoria</option>
                                         <?php
                                         foreach ($pdo->query($sqlmercadoria) as $row) {
                                             if ($row['id'] == $data['id_mercadoria']) {
@@ -181,13 +197,13 @@ if (empty($_POST)) {
                                         }
                                         ?>
                                     </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Servi&ccedil;o </label>
-                                    <select class="form-control" id="servico" name="id_servico">
-                                        <option value="0">Selecione o Servi&ccedil;o</option>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Servi&ccedil;o </label> <select class="form-control"
+										id="servico" name="id_servico">
+										<option value="0">Selecione o Servi&ccedil;o</option>
                                         <?php
                                         foreach ($pdo->query($sqlservico) as $row) {
                                             if ($row['id'] == $data['id_servico']) {
@@ -200,59 +216,32 @@ if (empty($_POST)) {
                                         }
                                         ?>
                                     </select>
-                                </div>
-                            </div>
-                        </div>
+								</div>
+							</div>
+						</div>
 
 
 
-                        <fieldset>
-                            <legend>Valores</legend>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Origem:</label>
-
-                                        <select class="form-control" id="origem" name="origem_">
-                                            <option value="0">Selecione a cidade</option>
-                                            <?php
-                                            foreach ($pdo->query($sqlcidades) as $row) {
-                                                if ($row['id'] == $data['origem']) {
-                                                    echo '<option value=' . $row['id'] . ' selected>';
-                                                } else {
-                                                    echo '<option value=' . $row['id'] . '>';
-                                                }
-                                                echo $row['nome'];
-                                                echo '</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Destino:</label>
-                                        <select class="form-control" id="destino" name="destino_">
-                                            <option value="0">Selecione a cidade</option>
-                                            <?php
-                                            foreach ($pdo->query($sqlcidades) as $row) {
-                                                if ($row['id'] == $data['origem']) {
-                                                    echo '<option value=' . $row['id'] . ' selected>';
-                                                } else {
-                                                    echo '<option value=' . $row['id'] . '>';
-                                                }
-                                                echo $row['nome'];
-                                                echo '</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Tipo de Ve&iacute;culo:</label>
-                                        <select class="form-control" id="tipo_veiculo" name="tipo_veiculo_">
-                                            <option value="0">Selecione o tipo</option>
+						<fieldset>
+							<legend>Valores</legend>
+							<div class="row">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label>Origem:</label> 
+										<input class="form-control" type="text" id="origem" placeholder="Digite a origem" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label>Destino:</label> 
+										<input class="form-control" type="text" id="destino" placeholder="Digite a origem" />
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label>Tipo de Ve&iacute;culo:</label> <select
+											class="form-control" id="tipo_veiculo" name="tipo_veiculo_">
+											<option value="0">Selecione o tipo</option>
                                             <?php
                                             foreach ($pdo->query($sqltipoveiculo) as $row) {
                                                 if ($row['id'] == $data['tipo_veiculo']) {
@@ -265,63 +254,63 @@ if (empty($_POST)) {
                                             }
                                             ?>
                                         </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Frete Peso:</label> <input class="form-control" type="text"
-                                            name="frete_peso_" id="frete_peso" value="">
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>GRIS:</label> <input class="form-control" type="text" name="gris_"
-                                            id="gris" value="">
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>ADV:</label> <input class="form-control" type="text" name="adv_" id="adv"
-                                            value="">
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>PEDAGIO:</label> <input class="form-control" type="text" name="pedagio"
-                                            id="pedagio" value="">
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>ICMS:</label> <input class="form-control" type="text" name="icms"
-                                            id="icms" value="">
-                                    </div>
-                                </div>
-                            </div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-3">
+									<div class="form-group">
+										<label>Frete Peso:</label> <input class="form-control"
+											type="text" name="frete_peso_" id="frete_peso" value="">
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<label>GRIS:</label> <input class="form-control" type="text"
+											name="gris_" id="gris" value="">
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<label>ADV:</label> <input class="form-control" type="text"
+											name="adv_" id="adv" value="">
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<label>PEDAGIO:</label> <input class="form-control"
+											type="text" name="pedagio" id="pedagio" value="">
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<label>ICMS:</label> <input class="form-control" type="text"
+											name="icms" id="icms" value="">
+									</div>
+								</div>
+							</div>
 
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <button type="button" id="btn-add-produtos"
-                                        class="btn btn-info btn-round">Adicionar...</button>
-                                </div>
-                            </div>
+							<div class="row">
+								<div class="col-md-3">
+									<button type="button" id="btn-add-produtos"
+										class="btn btn-info btn-round">Adicionar...</button>
+								</div>
+							</div>
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <table class="table" id="tableItens">
-                                        <thead class=" text-primary">
-                                            <th>Origem</th>
-                                            <th>Destino</th>
-                                            <th>Tipo de Veiculo</th>
-                                            <th>Frete Peso</th>
-                                            <th>GRIS</th>
-                                            <th>ADV</th>
-                                            <th>Pedagio</th>
-                                            <th>ICMS</th>
-                                        </thead>
-                                        <tbody>
+							<div class="row">
+								<div class="col-md-12">
+									<table class="table" id="tableItens">
+										<thead class=" text-primary">
+											<th>Origem</th>
+											<th>Destino</th>
+											<th>Tipo de Veiculo</th>
+											<th>Frete Peso</th>
+											<th>GRIS</th>
+											<th>ADV</th>
+											<th>Pedagio</th>
+											<th>ICMS</th>
+										</thead>
+										<tbody>
                                             <?php
                                             if ($id != "") {
                                                 foreach ($valores_orcamento as $row) {
@@ -339,31 +328,34 @@ if (empty($_POST)) {
                                             }
                                             ?>
                                         </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </fieldset>
+									</table>
+								</div>
+							</div>
+						</fieldset>
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Observa&ccedil;&otilde;es:</label><textarea name="observacoes"
-                                        id="observacoes" class="form-control" rows="5">
-                                        <?php if ($id != "") {
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label>Observa&ccedil;&otilde;es:</label>
+									<textarea name="observacoes" id="observacoes"
+										class="form-control" rows="5">
+                                        <?php
+
+if ($id != "") {
                                             echo $observacoes;
-                                        } ?>
+                                        }
+                                        ?>
                                         </textarea>
-                                </div>
-                            </div>
-                        </div>
+								</div>
+							</div>
+						</div>
 
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Escolta:</label>
-
-                                    <select class="form-control" id="escolta" name="escolta">
-                                        <option value="0">Selecione a escolta</option>
+						<div class="row">
+							<div class="col-md-3">
+								<div class="form-group">
+									<label>Escolta:</label> <select class="form-control"
+										id="escolta" name="escolta">
+										<option value="0">Selecione a escolta</option>
                                         <?php
                                         foreach ($pdo->query($sqlescolta) as $row) {
                                             if ($row['id'] == $data['escolta']) {
@@ -376,13 +368,13 @@ if (empty($_POST)) {
                                         }
                                         ?>
                                     </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>ICMS:</label>
-                                    <select class="form-control" id="icms_cond" name="icms_cond">
-                                        <option value="0">Selecione o ICMS</option>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label>ICMS:</label> <select class="form-control"
+										id="icms_cond" name="icms_cond">
+										<option value="0">Selecione o ICMS</option>
                                         <?php
                                         foreach ($pdo->query($sqlicms) as $row) {
                                             if ($row['id'] == $data['icms']) {
@@ -395,13 +387,13 @@ if (empty($_POST)) {
                                         }
                                         ?>
                                     </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Seguro de Mercadoria:</label>
-                                    <select class="form-control" id="seguro_merc" name="seguro_merc">
-                                        <option value="0">Selecione o Seguro</option>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label>Seguro de Mercadoria:</label> <select
+										class="form-control" id="seguro_merc" name="seguro_merc">
+										<option value="0">Selecione o Seguro</option>
                                         <?php
                                         foreach ($pdo->query($sqlseguromercadoria) as $row) {
                                             if ($row['id'] == $data['seguro_mercadoria']) {
@@ -414,13 +406,13 @@ if (empty($_POST)) {
                                         }
                                         ?>
                                     </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Carga e Descarga:</label>
-                                    <select class="form-control" id="carg_desc" name="carg_desc">
-                                        <option value="0">Selecione carga e descarga</option>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label>Carga e Descarga:</label> <select class="form-control"
+										id="carg_desc" name="carg_desc">
+										<option value="0">Selecione carga e descarga</option>
                                         <?php
                                         foreach ($pdo->query($sqlcargadescarga) as $row) {
                                             if ($row['id'] == $data['carga_descarga']) {
@@ -433,138 +425,153 @@ if (empty($_POST)) {
                                         }
                                         ?>
                                     </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Carregamento:</label> <input class="form-control" type="text"
-                                        name="carregamento" id="carregamento"
-                                        value="<?php if ($id != "") {
-                                                                                                                                                            echo
-                                                                                                                                                                $data['carregamento'];
-                                                                                                                                                        } else {
-                                                                                                                                                            echo "";
-                                                                                                                                                        } ?>">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Condições dos veículos:</label> <input class="form-control" type="text"
-                                        name="cond_veiculos" id="cond_veiculos"
-                                        value="<?php if ($id != "") {
-                                                                                                                                                                        echo $data['cond_veiculos'];
-                                                                                                                                                                    } else {
-                                                                                                                                                                        echo "Todos os veículos conforme leis e normas ANTT, as emissoes de CO² esta dentro do minimo exigido conforme leis ambientais";
-                                                                                                                                                                    } ?>">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Validade da Proposta:</label> <input class="form-control" type="text"
-                                        name="validade_proposta" id="validade_proposta"
-                                        value="<?php if ($id != "") {
-                                                                                                                                                                            echo  $data['validade_proposta'];
-                                                                                                                                                                        } else {
-                                                                                                                                                                            echo "12 meses";
-                                                                                                                                                                        } ?>">
-                                </div>
-                            </div>
-                            <div class="col-md-3" style="text-align: center;">
-                                <label>Tipo Carregamento:</label>
-                                <div class="form-group">
-                                    <label>Paletizado:</label>
-                                    <input class="form-control" type="radio" name="tipo_carregamento" id="paletizado"
-                                        value="paletizado"
-                                        <?php if ($id != "") {
-                                                                                                                                                if ($data['tipo_carregamento'] == "paletizado") {
-                                                                                                                                                    echo " checked";
-                                                                                                                                                }
-                                                                                                                                            }
-                                                                                                                                            ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label>Solto:</label>
-                                    <input class="form-control" type="radio" name="tipo_carregamento" id="solto"
-                                        value="solto"
-                                        <?php if ($id != "") {
-                                                                                                                                    if ($data['tipo_carregamento'] == "solto") {
-                                                                                                                                        echo " checked";
-                                                                                                                                    }
-                                                                                                                                }
-                                                                                                                                ?>>
-                                </div>
-                                <div class="form-group">
-                                    <label>BIG BAG:</label>
-                                    <input class="form-control" type="radio" name="tipo_carregamento" id="BIG BAG"
-                                        value="BIG BAG"
-                                        <?php if ($id != "") {
-                                                                                                                                        if ($data['tipo_carregamento'] == "BIG BAG") {
-                                                                                                                                            echo " checked";
-                                                                                                                                        }
-                                                                                                                                    }
-                                                                                                                                    ?>>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="update ml-auto mr-auto">
-                                <input type="hidden" name="sent" value="true"> <input type="hidden" name="id"
-                                    value="<?php if (isset($_GET["id"])) echo $_GET["id"] ?>">
-                                <button type="submit" class="btn btn-primary btn-round">Salvar</button>
-                                <a href="clientes.php" class="btn btn-danger btn-round">Cancelar</a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3">
+								<div class="form-group">
+									<label>Carregamento:</label> <input class="form-control"
+										type="text" name="carregamento" id="carregamento"
+										value="<?php
+
+if ($id != "") {
+            echo $data['carregamento'];
+        } else {
+            echo "";
+        }
+        ?>">
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label>Condições dos veículos:</label> <input
+										class="form-control" type="text" name="cond_veiculos"
+										id="cond_veiculos"
+										value="<?php
+
+if ($id != "") {
+            echo $data['cond_veiculos'];
+        } else {
+            echo "Todos os veículos conforme leis e normas ANTT, as emissoes de CO² esta dentro do minimo exigido conforme leis ambientais";
+        }
+        ?>">
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label>Validade da Proposta:</label> <input
+										class="form-control" type="text" name="validade_proposta"
+										id="validade_proposta"
+										value="<?php
+
+if ($id != "") {
+            echo $data['validade_proposta'];
+        } else {
+            echo "12 meses";
+        }
+        ?>">
+								</div>
+							</div>
+							<div class="col-md-3" style="text-align: center;">
+								<label>Tipo Carregamento:</label>
+								<div class="form-group">
+									<label>Paletizado:</label> <input class="form-control"
+										type="radio" name="tipo_carregamento" id="paletizado"
+										value="paletizado"
+										<?php
+
+if ($id != "") {
+            if ($data['tipo_carregamento'] == "paletizado") {
+                echo " checked";
+            }
+        }
+        ?>>
+								</div>
+								<div class="form-group">
+									<label>Solto:</label> <input class="form-control" type="radio"
+										name="tipo_carregamento" id="solto" value="solto"
+										<?php
+
+if ($id != "") {
+            if ($data['tipo_carregamento'] == "solto") {
+                echo " checked";
+            }
+        }
+        ?>>
+								</div>
+								<div class="form-group">
+									<label>BIG BAG:</label> <input class="form-control"
+										type="radio" name="tipo_carregamento" id="BIG BAG"
+										value="BIG BAG"
+										<?php
+
+if ($id != "") {
+            if ($data['tipo_carregamento'] == "BIG BAG") {
+                echo " checked";
+            }
+        }
+        ?>>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="update ml-auto mr-auto">
+								<input type="hidden" name="sent" value="true"> <input
+									type="hidden" name="id"
+									value="<?php if (isset($_GET["id"])) echo $_GET["id"] ?>">
+								<button type="submit" class="btn btn-primary btn-round">Salvar</button>
+								<a href="clientes.php" class="btn btn-danger btn-round">Cancelar</a>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <form action="" method="post" id="valores_form">
-    <div></div>
+	<div></div>
 </form>
 <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
+	<div class="modal-dialog">
 
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Conex&atilde;o</h4>
-            </div>
-            <div class="modal-body">
-                <p id="error"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Conex&atilde;o</h4>
+			</div>
+			<div class="modal-body">
+				<p id="error"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+			</div>
+		</div>
+	</div>
 </div>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+<link
+	href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css"
+	rel="stylesheet" />
+<script
+	src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 
 
 
 <script>
-$("#origem").select2()
-$("#destino").select2()
+$(function() {
+	  var esportes = [
+	    "Nata��o",
+	    "Futebol",
+	    "V�lei",
+	    "Basquete"
+	  ];
+	  $("#origem" ).autocomplete({
+	    source: esportes
+	  });
+	});
 
-function RetornaDataHoraAtual() {
-    if ($("#data").val() == "") {
-        var dNow = new Date();
-        var localdate = dNow.getDate() + '/' + (dNow.getMonth() + 1) + '/' + dNow.getFullYear() + ' ' + dNow
-            .getHours() +
-            ':' + dNow.getMinutes() + ':' + dNow.getSeconds();
-        $("#data").val(localdate);
-        return localdate;
-    } else {
-        return false
-    }
 
-}
-RetornaDataHoraAtual();
 var valores;
 var counter = 0;
 $("#btn-add-produtos").click(function() {

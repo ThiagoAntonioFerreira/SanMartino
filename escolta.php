@@ -2,47 +2,45 @@
 include 'banco.php';
 $id = "";
 if (!empty($_GET['id'])) {
-	$id = $_REQUEST['id'];
+    $id = $_REQUEST['id'];
 }
 
 
 if (empty($_POST)) {
-	$pdo = Banco::conectar();
+    $pdo = Banco::conectar();
 
 
-	if ($id != "") {
-		$pdo = Banco::conectar();
-		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "SELECT id, icms, percentual FROM icms where id = ?";
-		$q = $pdo->prepare($sql);
-		$q->execute(array($id));
-		$data = $q->fetch(PDO::FETCH_ASSOC);
-		$icms = $data['icms'];
-		$percentual = $data['percentual'];
+    if ($id != "") {
+        $pdo = Banco::conectar();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "SELECT * FROM escolta where id = ?";
+        $q = $pdo->prepare($sql);
+        $q->execute(array($id));
+        $data = $q->fetch(PDO::FETCH_ASSOC);
+        $escolta = $data['escolta'];
 
-		Banco::desconectar();
-	}
+        Banco::desconectar();
+    }
 } else {
 
-	$id = $_POST['id'];
-	$icms = $_POST['icms'];
-	$percentual = $_POST['percentual'];
-	$pdo = Banco::conectar();
-	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	if (empty($id)) {
-		$sql = "INSERT INTO icms (icms, percentual) VALUES(?, ?)";
-		$q = $pdo->prepare($sql);
-		$q->execute(array($icms, $percentual));
+    $id = $_POST['id'];
+    $escolta = $_POST['escolta'];
+    $pdo = Banco::conectar();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    if (empty($id)) {
+        $sql = "INSERT INTO escolta (escolta) VALUES(?)";
+        $q = $pdo->prepare($sql);
+        $q->execute(array($escolta));
 
-		$id = $pdo->lastInsertId();
-	} else {
-		$sql = "update icms set icms=?, percentual=? where id=?";
-		$q = $pdo->prepare($sql);
-		$q->execute(array($icms, $percentual, $id));
-	}
+        $id = $pdo->lastInsertId();
+    } else {
+        $sql = "update escolta set escolta=? where id=?";
+        $q = $pdo->prepare($sql);
+        $q->execute(array($escolta, $id));
+    }
 
-	Banco::desconectar();
-	header("Location: icms-list.php");
+    Banco::desconectar();
+    header("Location: escoltas.php");
 }
 ?>
 <?php include("header.php"); ?>
@@ -51,28 +49,18 @@ if (empty($_POST)) {
         <div class="col-md-8">
             <div class="card card-user">
                 <div class="card-header">
-                    <h5 class="card-title">ICMS</h5>
+                    <h5 class="card-title">Escolta</h5>
                 </div>
                 <div class="card-body">
                     <form method="post">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label>Nome ICMS:</label>
-                                    <input class="form-control" name="icms"
-                                        value="<?php echo !empty($icms) ? $icms : ''; ?>" required="required"
-                                        placeholder="Nome da icms">
+                                    <label>Nome Escolta:</label>
+                                    <input class="form-control" name="escolta"
+                                        value="<?php echo !empty($escolta) ? $escolta : ''; ?>"
+                                        required="required" placeholder="Nome Escolta">
                                     <input type="hidden" name="id" value="<?php echo !empty($id) ? $id : ''; ?>">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>% de ICMS:</label>
-                                    <input class="form-control" name="percentual"
-                                        value="<?php echo !empty($percentual) ? $percentual : ''; ?>" required="required"
-                                        placeholder="Percentual de icms">
                                 </div>
                             </div>
                         </div>
@@ -82,7 +70,7 @@ if (empty($_POST)) {
                                 <input type="hidden" name="sent" value="true"> <input type="hidden" name="id"
                                     value="<?php if (isset($_GET["id"])) echo $_GET["id"] ?>">
                                 <button type="submit" class="btn btn-primary btn-round">Salvar</button>
-                                <a href="icms-list.php" class="btn btn-danger btn-round">Cancelar</a>
+                                <a href="escoltas.php" class="btn btn-danger btn-round">Cancelar</a>
                             </div>
                         </div>
                     </form>

@@ -9,7 +9,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <a href="carga-descarga.php" class="btn btn-primary btn-block">Adicionar
                                 Carga e Descarga</a>
                         </div>

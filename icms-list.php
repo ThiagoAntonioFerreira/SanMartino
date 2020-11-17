@@ -17,18 +17,20 @@
                     <div class="table-responsive">
                         <table class="table" id="myTable">
                             <thead class=" text-primary">
-                                <th>icms</th>
+                                <th>ICMS</th>
+                                <th>Percentual</th>
                                 <th>A&ccedil;&otilde;es</th>
                             </thead>
                             <tbody>
                                 <?php
 								include 'banco.php';
 								$pdo = Banco::conectar();
-								$sql = 'select id, icms from icms ORDER BY icms';
+								$sql = 'select id, icms, percentual from icms ORDER BY icms';
 
 								foreach ($pdo->query($sql) as $row) {
 									echo '<tr>';
 									echo '<td>' . $row['icms'] . '</td>';
+									echo '<td>' . $row['percentual'] . '</td>';
 									echo '<td>
 										<input type="hidden" value="' . $row['id'] . '" id="hfId" />
 										<a href="icms.php?id=' . $row['id'] . '" class="btn btn-primary"><i class="fa fa-edit"></i></a>

@@ -2,17 +2,17 @@
 
 class Banco
 {
-    private static $dbNome = 'webness_smtlog';
+   /* private static $dbNome = 'webness_smtlog';
     private static $dbHost = '177.53.142.253:3303';
     private static $dbUsuario = 'webness_smtlog';
     private static $dbSenha = 'u)3d%?-5-nk9';
 
-    /*
-     private static $dbNome = 'harmonizenet_harmonize';
+    */
+     private static $dbNome = 'sanmartino';
      private static $dbHost = 'localhost';
-     private static $dbUsuario = 'harmonizenet_admin';
-     private static $dbSenha = 'harmonizenet_admin';
-     */
+     private static $dbUsuario = 'root';
+     private static $dbSenha = '';
+     
     private static $cont = null;
     
     public function __construct()

@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $mensagem = "";
 if (!empty($_POST)) {
     include 'banco.php';
@@ -319,7 +323,7 @@ input[type=text]:placeholder, input[type=password]:placeholder {
 			<?php }?>
 
     <!-- Login Form -->
-    <form method="post">
+    <form method="post" action="login.php">
       <input type="text" id="login" class="fadeIn second" required name="login" placeholder="Usu&aacute;rio">
       <input type="password" id="password" class="fadeIn third" required name="senha" placeholder="Senha">
       <input type="submit" class="fadeIn fourth" value="Log In">

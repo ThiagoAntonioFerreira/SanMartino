@@ -67,7 +67,10 @@ if (isset($_GET["excluir"])) {
                                     echo '<td>
 										<input type="hidden" value="' . $row['id'] . '" id="hfId" />
 										<a href="orcamento.php?id=' . $row['id'] . '" class="btn btn-primary"><i class="fa fa-edit"></i></a>
-										<a href="#" class="btn btn-danger btn-excluir"><i class="fa fa-trash"></i></a></td>';
+										<a href="#" class="btn btn-danger btn-excluir"><i class="fa fa-trash"></i></a>
+                                        <a href="#" class="btn btn-info btn-email"><i class="fa fa-envelope"></i></a>
+                                        <a href="printorcamento.php?id='.$row['id'].'" target="_blank" class="btn btn-default btn-email"><i class="fa fa-print"></i></a>
+                                        </td>';
                                     echo '</tr>';
                                 }
                                 ?>
@@ -98,6 +101,20 @@ $(document).ready(function() {
                 }
             });
         }
+    });
+
+    $('.btn-email').click(function(){
+    	$.LoadingOverlay("show");
+    	var id = $(this).siblings('#hfId').val();
+
+    	$.ajax({
+            url: 'sendmail.php?email=' + id,
+            type: 'POST',
+            success: function(result) {
+            	window.location.href = "orcamentos.php";
+            }
+        });
+    	$.LoadingOverlay("hide");
     });
 });
 

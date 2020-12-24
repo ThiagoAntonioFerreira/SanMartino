@@ -2,12 +2,12 @@
 
 class Banco
 {
-   /* private static $dbNome = 'webness_smtlog';
-    private static $dbHost = '177.53.142.253:3303';
+    /*private static $dbNome = 'webness_smtlog';
+    private static $dbHost = 'localhost';
     private static $dbUsuario = 'webness_smtlog';
-    private static $dbSenha = 'u)3d%?-5-nk9';
+    private static $dbSenha = 'u)3d%?-5-nk9';*/
 
-    */
+    
      private static $dbNome = 'sanmartino';
      private static $dbHost = 'localhost';
      private static $dbUsuario = 'root';

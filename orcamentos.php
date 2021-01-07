@@ -58,8 +58,13 @@ if (isset($_GET["excluir"])) {
                                         ORDER BY id desc';
 
                                 foreach ($pdo->query($sql) as $row) {
+                                    $numero = str_pad($row['id'], 8, "0", STR_PAD_LEFT);
+                                    //echo $numero;
+                                    $strInicial = substr($numero, 0, 5);
+                                    $strFinal = substr($numero, -3);                                    
+                                    
                                     echo '<tr>';
-                                    echo '<td>'.$row['id'].'</td>';
+                                    echo '<td>'.$strInicial.'-'. $strFinal.'</td>';
                                     echo '<td>'.date('d/m/Y', strtotime($row['data'])).'</td>';
                                     echo '<td>'.$row['nome'].'</td>';
                                     echo '<td>'.$row['servico'].'</td>';
@@ -120,6 +125,7 @@ $(document).ready(function() {
 
 $(document).ready(function() {
     $('#myTable').DataTable({
+    	"order": [[ 0, "desc" ]],
         "language": {
             "sEmptyTable": "N&atilde;o foi encontrado nenhum registo",
             "sLoadingRecords": "A carregar...",

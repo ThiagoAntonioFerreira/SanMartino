@@ -150,6 +150,12 @@ if (empty($_SESSION['email'])) {
                                         <span class="sidebar-normal">Clientes</span>
                                     </a>
                                 </li>
+                                 <li
+                                    <?php if (basename($_SERVER['PHP_SELF']) == "condicaopagamento-list.php" || basename($_SERVER['PHP_SELF']) == "condicaopagamento-list.php") echo "class='active'"; ?>>
+                                    <a href="./condicaopagamento-list.php">
+                                        <span class="sidebar-normal">Condi&ccedil;&otilde;es de Pagamento</span>
+                                    </a>
+                                </li>
                                 <li
                                     <?php if (basename($_SERVER['PHP_SELF']) == "servicos.php"  || basename($_SERVER['PHP_SELF']) == "servico.php") echo "class='active'"; ?>>
                                     <a href="./servicos.php">

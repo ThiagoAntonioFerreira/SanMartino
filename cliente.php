@@ -14,11 +14,12 @@
 		if ($id != ""){
 			$pdo = Banco::conectar();
 			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$sql = "SELECT id, nome, email, telefone FROM clientes where id = ?";
+			$sql = "SELECT id, nome, email, telefone, responsavel FROM clientes where id = ?";
 			$q = $pdo->prepare($sql);
 			$q->execute(array($id));
 			$data = $q->fetch(PDO::FETCH_ASSOC);
 			$nome = $data['nome'];
+			$responsavel = $data['responsavel'];
 			$email = $data['email'];
 			$telefone = $data['telefone'];
 			
@@ -30,20 +31,21 @@
 		$nome = $_POST['nome'];
 		$email = $_POST['email'];
 		$telefone = $_POST['telefone'];
+		$responsavel = $_POST['responsavel'];
 		$pdo = Banco::conectar();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		if (empty($id)) 
 		{
-			$sql = "INSERT INTO clientes (nome, email, telefone) VALUES(?,?,?)";
+			$sql = "INSERT INTO clientes (nome, email, telefone, responsavel) VALUES(?,?,?,?)";
 			$q = $pdo->prepare($sql);
-			$q->execute(array($nome, $email, $telefone));
+			$q->execute(array($nome, $email, $telefone, $responsavel));
 			
 			$id = $pdo->lastInsertId();
 			
 		}else{
-			$sql = "update clientes set nome=?, email=?, telefone=? where id=?";
+			$sql = "update clientes set nome=?, email=?, telefone=?, responsavel=? where id=?";
 			$q = $pdo->prepare($sql);
-			$q->execute(array($nome, $email, $telefone, $id));
+			$q->execute(array($nome, $email, $telefone, $responsavel, $id));
 		}
 			
         Banco::desconectar();
@@ -66,6 +68,14 @@
 									<label>Nome </label> 
 									<input class="form-control" name="nome" value="<?php echo !empty($nome)?$nome:'';?>" required="required" placeholder="Nome do Cliente">
 									<input type="hidden" name="id" value="<?php echo !empty($id)?$id:'';?>">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label>Respons&aacute;vel </label> 
+									<input class="form-control" name="responsavel" value="<?php echo !empty($responsavel)?$responsavel:'';?>" required="required" placeholder="Nome do Respons&aacute;vel">
 								</div>
 							</div>
 						</div>

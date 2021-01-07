@@ -18,6 +18,7 @@ var counter = 0;
   </style>
   
 <?php
+session_start();
 include 'banco.php';
 $sqlcliente = 'SELECT id, nome FROM clientes ORDER BY nome';
 $sqlservico = 'SELECT id, servico FROM servicos ORDER BY servico';
@@ -28,6 +29,7 @@ $sqlseguromercadoria = 'SELECT id, seguro_mercadoria FROM seguro_mercadoria ORDE
 $sqlicms = 'SELECT id, icms, percentual FROM icms ORDER BY icms';
 $sqlescolta = 'SELECT id, escolta FROM escolta ORDER BY escolta';
 $sqltipoveiculo = 'SELECT id, tipo_veiculo FROM tipo_veiculos ORDER BY tipo_veiculo';
+$sqlcondicao = 'SELECT id, descricao FROM condicao_pagamento ORDER BY descricao';
 
 $id = "";
 if (! empty($_GET['id'])) {
@@ -61,14 +63,17 @@ if (empty($_POST)) {
     $validade_proposta = $_POST['validade_proposta'];
     $seguro_merc = $_POST['seguro_merc'];
     $carg_desc = $_POST['carg_desc'];
-    $cond_veiculos = $_POST['cond_veiculos'];    
+    $cond_veiculos = $_POST['cond_veiculos'];
+    $id_condicao_pagamento = $_POST['id_condicao_pagamento'];
+    $desc_carregamento = $_POST['desc_carregamento'];
+    $icms = $_POST['icms'];
     
     $pdo = Banco::conectar();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     if (empty($id)) {
-        $sql = "INSERT INTO orcamentos (id_cliente, data, id_servico, id_mercadoria, escolta, tipo_carregamento, observacoes, 
-validade_proposta, seguro_merc, carg_desc, cond_veiculos ) 
-VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO orcamentos (id_cliente, data, id_mercadoria, id_servico, escolta, tipo_carregamento, observacoes, 
+validade_proposta, seguro_merc, carg_desc, cond_veiculos, id_condicao_pagamento, desc_carregamento, icms, usuario_criacao, data_criacao ) 
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())";
         $q = $pdo->prepare($sql);
         $q->execute(array(
             $id_cliente,
@@ -81,7 +86,11 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?)";
             $validade_proposta,
             $carg_desc,
             $seguro_merc,
-            $cond_veiculos
+            $cond_veiculos,
+            $id_condicao_pagamento,
+            $desc_carregamento,
+            $icms,
+            $_SESSION['nome']
         ));
 
         $id = $pdo->lastInsertId();
@@ -103,8 +112,9 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?)";
             ));
         }
     } else {
-        $sql = "update orcamentos set id_cliente=?, data=?, id_servico=?, id_mercadoria=?, escolta=?, 
-tipo_carregamento=?, observacoes=?, validade_proposta=?, seguro_merc=?, carg_desc=?, cond_veiculos=? where id=?";
+        $sql = "update orcamentos set id_cliente=?, data=?, id_mercadoria=?, id_servico=?, escolta=?, 
+tipo_carregamento=?, observacoes=?, validade_proposta=?, carg_desc=?, seguro_merc=?, cond_veiculos=?, id_condicao_pagamento=?, 
+desc_carregamento=?, icms=? where id=?";
         $q = $pdo->prepare($sql);
         $q->execute(array(
             $id_cliente,
@@ -118,6 +128,9 @@ tipo_carregamento=?, observacoes=?, validade_proposta=?, seguro_merc=?, carg_des
             $carg_desc,
             $seguro_merc,
             $cond_veiculos,
+            $id_condicao_pagamento,
+            $desc_carregamento,
+            $icms,
             $id
         ));
         
@@ -336,12 +349,14 @@ tipo_carregamento=?, observacoes=?, validade_proposta=?, seguro_merc=?, carg_des
 											<th>ADV</th>
 											<th>Pedagio</th>
 											<th>ICMS</th>
+											<th>*</th>
 										</thead>
 										<tbody>
                                             <?php
                                             if ($id != "") {
-                                                $sqlitens = "SELECT vo.*, t.tipo_veiculo, t.id as id_tipo_veiculo FROM valores_orcamento vo left join 
-                                                             tipo_veiculos t on (vo.tipo_veiculo = t.id) where id_orcamento = ?";
+                                                $sqlitens = "SELECT vo.*, t.tipo_veiculo, t.id as id_tipo_veiculo, icms.icms as desc_icms FROM valores_orcamento vo left join 
+                                                             tipo_veiculos t on (vo.tipo_veiculo = t.id) left join icms icms on (icms.id = vo.icms) 
+                                                             where id_orcamento = ?";
                                                 $id_orcamento = $id;
                                                 $q = $pdo->prepare($sqlitens);
                                                 $q->execute(array(
@@ -350,17 +365,18 @@ tipo_carregamento=?, observacoes=?, validade_proposta=?, seguro_merc=?, carg_des
                                                 $result = $q->fetchAll(\PDO::FETCH_ASSOC);
                                                 $counter  = 0;
                                                 foreach ($result as $row) {
+                                                    echo '<tr>';
+                                                    
                                                     echo '<input type="hidden" name="origem['.$counter.']" value="' . $row['origem'] . '" />' .
-                                                    '<input type="hidden" name="destino['.$counter.']" value="'. $row['origem'] . '" />' .
+                                                    '<input type="hidden" name="destino['.$counter.']" value="'. $row['destino'] . '" />' .
                                                     '<input type="hidden" name="tipo_veiculo['.$counter.']" value="' . $row['id_tipo_veiculo'] .'" />' .
                                                     '<input type="hidden" name="frete_peso['.$counter.']" value="'. $row['frete_peso'] .'" />' .
                                                     '<input type="hidden" name="gris['.$counter.']" value="' . $row['gris'] . '" />' .
                                                     '<input type="hidden" name="adv['.$counter.']" value="' . $row['adv'] .'" />' .
                                                     '<input type="hidden" name="pedagio['.$counter.']" value="' . $row['pedagio'] . '" />' .
-                                                    '<input type="hidden" name="icms_cond['.$counter.']" value="' . $row['icms'] . '" />';
+                                                    '<input type="hidden" name="icms_cond['.$counter.']" value="' . $row['icms'] . '" />';                                                   
                                                     
                                                     
-                                                    echo '<tr>';
                                                     echo "<td>" . $row['origem'] . "</td>";
                                                     echo "<td>" . $row['destino'] . "</td>";
                                                     echo "<td>" . $row['tipo_veiculo'] . "</td>";
@@ -368,7 +384,8 @@ tipo_carregamento=?, observacoes=?, validade_proposta=?, seguro_merc=?, carg_des
                                                     echo "<td>" . $row['gris'] . "</td>";
                                                     echo "<td>" . $row['adv'] . "</td>";
                                                     echo "<td>" . $row['pedagio'] . "</td>";
-                                                    echo "<td>" . $row['icms'] . "</td>";
+                                                    echo "<td>" . $row['desc_icms'] . "</td>";
+                                                    echo "<td><button type='button' class='btn btn-danger btn-excluir' title='Excluir' onclick='deleteRow(this);'><i class='fa fa-trash'></i></button></td></td>";
                                                     echo "</tr>";
                                                     $counter++;
                                                 }
@@ -415,7 +432,7 @@ tipo_carregamento=?, observacoes=?, validade_proposta=?, seguro_merc=?, carg_des
 										<option value="0">Selecione o Seguro</option>
                                         <?php
                                         foreach ($pdo->query($sqlseguromercadoria) as $row) {
-                                            if ($row['id'] == $data['seguro_mercadoria']) {
+                                            if ($row['id'] == $data['seguro_merc']) {
                                                 echo '<option value=' . $row['id'] . ' selected>';
                                             } else {
                                                 echo '<option value=' . $row['id'] . '>';
@@ -434,7 +451,7 @@ tipo_carregamento=?, observacoes=?, validade_proposta=?, seguro_merc=?, carg_des
 										<option value="0">Selecione carga e descarga</option>
                                         <?php
                                         foreach ($pdo->query($sqlcargadescarga) as $row) {
-                                            if ($row['id'] == $data['carga_descarga']) {
+                                            if ($row['id'] == $data['carg_desc']) {
                                                 echo '<option value=' . $row['id'] . ' selected>';
                                             } else {
                                                 echo '<option value=' . $row['id'] . '>';
@@ -448,6 +465,22 @@ tipo_carregamento=?, observacoes=?, validade_proposta=?, seguro_merc=?, carg_des
 							</div>
 						</div>
 						<div class="row">
+						<div class="col-md-8">
+								<div class="form-group">
+									<label>ICMS:</label> <input
+										class="form-control" type="text" name="icms"
+										id="icms"
+										value="<?php
+
+if ($id != "") {
+            echo $data['icms'];
+        } else {
+            echo "Conforme legisla&ccedil;&atilde;o vigente;";
+        }
+        ?>">
+								</div>
+							</div>
+						
 							<div class="col-md-4">
 								<div class="form-group">
 									<label>Condições dos veículos:</label> <input
@@ -465,7 +498,7 @@ if ($id != "") {
 							</div>
 							<div class="col-md-4">
 								<div class="form-group">
-									<label>Validade da Proposta (Em Dias):</label> <input
+									<label>Validade da Proposta (Em Meses):</label> <input
 										class="form-control" type="number" min="1" max="999" maxlength="3" name="validade_proposta"
 										id="validade_proposta"
 										value="<?php
@@ -494,8 +527,48 @@ if ($id != "") {
                                         <option value="3" <?php if (isset($_GET["id"]) && $data['tipo_carregamento'] == "3") {
                                                 echo 'selected';
                                             }?>>BIG BAG</option>
+                                            <option value="4" <?php if (isset($_GET["id"]) && $data['tipo_carregamento'] == "4") {
+                                                echo 'selected';
+                                            }?>>Container 20'</option>
+                                            <option value="5" <?php if (isset($_GET["id"]) && $data['tipo_carregamento'] == "5") {
+                                                echo 'selected';
+                                            }?>>Container 40'</option>
                                     </select>
 								
+							</div>
+							
+							<div class="col-md-4">
+								<div class="form-group">
+									<label>Condi&ccedil;&atilde;o de Pagamento:</label> <select class="form-control"
+										id="id_condicao_pagamento" name="id_condicao_pagamento">
+										<option value="0">Selecione a Condi&ccedil;&atilde;o de Pagamento</option>
+                                        <?php
+                                        foreach ($pdo->query($sqlcondicao) as $row) {
+                                            if ($row['id'] == $data['id_condicao_pagamento']) {
+                                                echo '<option value=' . $row['id'] . ' selected>';
+                                            } else {
+                                                echo '<option value=' . $row['id'] . '>';
+                                            }
+                                            echo $row['descricao'];
+                                            echo '</option>';
+                                        }
+                                        ?>
+                                    </select>
+								</div>
+							</div>
+							
+							<div class="col-md-8">
+								<div class="form-group">
+									<label>Carregamento:</label> <input
+										class="form-control" type="text" name="desc_carregamento"
+										id="desc_carregamento"
+										value="<?php
+
+if ($id != "") {
+            echo $data['desc_carregamento'];
+        }
+        ?>">
+								</div>
 							</div>
 						</div>
 						<div class="row">
@@ -604,10 +677,33 @@ $("#btn-add-produtos").click(function() {
         "<td>" + $("#adv").val() + "</td>" +
         "<td>" + $("#pedagio").val() + "</td>" +
         "<td>" + $("#icms_cond option:selected" ).text() + "</td>" +
+        "<td><button type='button' class='btn btn-danger btn-excluir' title='Excluir' onclick='deleteRow(this);'><i class='fa fa-trash'></i></button></td>" +
         "</tr>"
     );
 
 });
+
+function deleteRow(item) {
+    if ($('#tableItens tr').length > 1) {
+        $(item).parents("tr").remove();
+        var itemIndex = 0;
+        $('#tableItens  > tbody  > tr').each(function () {
+            var this_row = $(this);
+			console.log(this_row.find('input[name$="origem"]').val());
+            this_row.find('input[name^="origem"]').attr('name', 'origem[' + itemIndex + ']');
+            this_row.find('input[name^="destino"]').attr('name', 'destino[' + itemIndex + ']');
+            this_row.find('input[name^="tipo_veiculo"]').attr('name', 'tipo_veiculo[' + itemIndex + ']');
+            this_row.find('input[name^="frete_peso"]').attr('name', 'frete_peso[' + itemIndex + ']');
+            this_row.find('input[name^="gris"]').attr('name', 'gris[' + itemIndex + ']');
+            this_row.find('input[name^="adv"]').attr('name', 'adv[' + itemIndex + ']');
+            this_row.find('input[name^="pedagio"]').attr('name', 'pedagio[' + itemIndex + ']');
+            this_row.find('input[name^="icms_cond"]').attr('name', 'icms_cond[' + itemIndex + ']');
+            
+            itemIndex++;
+        });
+        counter = Index - 1; 
+    }
+}
 </script>
 
 <?php include("footer.php"); ?>

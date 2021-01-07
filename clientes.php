@@ -18,6 +18,7 @@
 						<table class="table" id="myTable">
 							<thead class=" text-primary">
 								<th>Nome</th>
+								<th>Respons&aacute;vel</th>
 								<th>E-mail</th>
 								<th>Telefone</th>
 								<th>A&ccedil;&otilde;es</th>
@@ -26,12 +27,13 @@
 							<?php
 								include 'banco.php';
 								$pdo = Banco::conectar();
-								$sql = 'select id, nome, email, telefone from clientes ORDER BY nome';
+								$sql = 'select id, nome, email, telefone, responsavel from clientes ORDER BY nome';
                         
 									foreach($pdo->query($sql)as $row)
 									{
 										echo '<tr>';
 										echo '<td>'. $row['nome'] . '</td>';
+										echo '<td>'. $row['responsavel'] . '</td>';
 										echo '<td>'. $row['email'] . '</td>';
 										echo '<td>'. $row['telefone'] . '</td>';
 										echo '<td>

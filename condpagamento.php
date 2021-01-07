@@ -1,13 +1,4 @@
 <?php
-function GUID()
-{
-	if (function_exists('com_create_guid') === true) {
-		return trim(com_create_guid(), '{}');
-	}
-	return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
-}
-
-
 include 'banco.php';
 $id = "";
 if (!empty($_GET['id'])) {
@@ -22,35 +13,35 @@ if (empty($_POST)) {
 	if ($id != "") {
 		$pdo = Banco::conectar();
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "SELECT * FROM tipo_veiculos where id = ?";
+		$sql = "SELECT id, descricao FROM condicao_pagamento where id = ?";
 		$q = $pdo->prepare($sql);
 		$q->execute(array($id));
 		$data = $q->fetch(PDO::FETCH_ASSOC);
-		$tipo_veiculo = $data['tipo_veiculo'];
-		$capacidade = $data['capacidade'];
+		$id = $data['id'];
+		$descricao = $data['descricao'];
+
 		Banco::desconectar();
 	}
 } else {
 
 	$id = $_POST['id'];
-	$tipo_veiculo = $_POST['tipo_veiculo'];
-	$capacidade = $_POST['capacidade'];
+	$descricao = $_POST['descricao'];
 	$pdo = Banco::conectar();
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	if (empty($id)) {
-		$sql = "INSERT INTO tipo_veiculos (tipo_veiculo, capacidade) VALUES(?, ?)";
+		$sql = "INSERT INTO condicao_pagamento (descricao) VALUES(?)";
 		$q = $pdo->prepare($sql);
-		$q->execute(array($tipo_veiculo, $capacidade));
+		$q->execute(array($descricao));
 
 		$id = $pdo->lastInsertId();
 	} else {
-		$sql = "update tipo_veiculos set tipo_veiculo=?, capacidade=? where id=?";
+		$sql = "update condicao_pagamento set descricao=? where id=?";
 		$q = $pdo->prepare($sql);
-		$q->execute(array($tipo_veiculo, $capacidade, $id));
+		$q->execute(array($descricao, $id));
 	}
 
 	Banco::desconectar();
-	header("Location: tipo-veiculo-list.php");
+	header("Location: condicaopagamento-list.php");
 }
 ?>
 <?php include("header.php"); ?>
@@ -59,29 +50,18 @@ if (empty($_POST)) {
         <div class="col-md-8">
             <div class="card card-user">
                 <div class="card-header">
-                    <h5 class="card-title">Tipo de Veiculo</h5>
+                    <h5 class="card-title">Condi&ccedil;&atilde;o de Pagamento</h5>
                 </div>
                 <div class="card-body">
                     <form method="post">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label>Tipo</label>
-                                    <input class="form-control" name="tipo_veiculo"
-                                        value="<?php echo !empty($tipo_veiculo) ? $tipo_veiculo : ''; ?>"
-                                        required="required" placeholder="Nome do Tipo">
+                                    <label>Condi&ccedil;&atilde;o de Pagamento:</label>
+                                    <input class="form-control" name="descricao"
+                                        value="<?php echo !empty($descricao) ? $descricao : ''; ?>" required="required"
+                                        placeholder="Condi&ccedil;&atilde;o de Pagamento">
                                     <input type="hidden" name="id" value="<?php echo !empty($id) ? $id : ''; ?>">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Capacidade (Toneladas)</label>
-                                    <input class="form-control" name="capacidade" type="number"
-                                        value="<?php echo !empty($capacidade) ? $capacidade : ''; ?>"
-                                        required="required" placeholder="Capacidade em Toneladas">
                                 </div>
                             </div>
                         </div>
@@ -91,7 +71,7 @@ if (empty($_POST)) {
                                 <input type="hidden" name="sent" value="true"> <input type="hidden" name="id"
                                     value="<?php if (isset($_GET["id"])) echo $_GET["id"] ?>">
                                 <button type="submit" class="btn btn-primary btn-round">Salvar</button>
-                                <a href="tipo-veiculo-list.php" class="btn btn-danger btn-round">Cancelar</a>
+                                <a href="condicaopagamento-list.php" class="btn btn-danger btn-round">Cancelar</a>
                             </div>
                         </div>
                     </form>

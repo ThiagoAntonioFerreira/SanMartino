@@ -5,35 +5,33 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Cadastro de Tipo de Veiculo</h4>
+                    <h4 class="card-title">Cadastro de Condi&ccedil;&otilde;es de Pagamento</h4>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3">
-                            <a href="tipo-veiculo.php" class="btn btn-primary btn-block">Adicionar
-                                Tipos</a>
+                        <div class="col-md-4">
+                            <a href="condpagamento.php" class="btn btn-primary btn-block">Adicionar
+                                Condi&ccedil;&otilde;es de Pagamento</a>
                         </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table" id="myTable">
                             <thead class=" text-primary">
-                                <th>Tipo</th>
-                                <th>Capacidade (Ton)</th>
-                                <th>A&ccedil;&otilde;es</th>
+                                <th>Condi&ccedil;&otilde;es de Pagamento</th>
+                                <th>*</th>
                             </thead>
                             <tbody>
                                 <?php
 								include 'banco.php';
 								$pdo = Banco::conectar();
-								$sql = 'select id, tipo_veiculo, capacidade from tipo_veiculos ORDER BY tipo_veiculo';
+								$sql = 'select id, descricao from condicao_pagamento ORDER BY descricao';
 
 								foreach ($pdo->query($sql) as $row) {
 									echo '<tr>';
-									echo '<td>' . $row['tipo_veiculo'] . '</td>';
-									echo '<td>' . $row['capacidade'] . '</td>';
+									echo '<td>' . $row['descricao'] . '</td>';
 									echo '<td>
 										<input type="hidden" value="' . $row['id'] . '" id="hfId" />
-										<a href="tipo-veiculo.php?id=' . $row['id'] . '" class="btn btn-primary"><i class="fa fa-edit"></i></a>
+										<a href="condpagamento.php?id=' . $row['id'] . '" class="btn btn-primary"><i class="fa fa-edit"></i></a>
 										<a href="#" class="btn btn-danger"><i class="fa fa-trash"></i></a></td>';
 									echo '</tr>';
 								}
